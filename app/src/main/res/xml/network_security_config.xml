@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <!-- <domain includeSubdomains="true">example.com</domain> 透過此添加以下網址可使用非安全連線-->
+    </domain-config>
+</network-security-config>
