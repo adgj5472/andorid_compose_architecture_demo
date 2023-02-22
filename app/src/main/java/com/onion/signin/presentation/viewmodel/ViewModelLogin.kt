@@ -9,16 +9,15 @@ import com.onion.signin.navigation.RouteNavigator
 import com.onion.signin.ui.compose.SignRoute
 import com.onion.signin.ui.compose.WebViewClientRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 data class ComposeLoginUIState(
     var loadingState: Boolean = false,
-    var isLogin: Boolean = false
 )
 
 @HiltViewModel
@@ -40,12 +39,8 @@ class ViewModelLogin @Inject constructor(
     }
 
     fun doLogin() {
-        viewModelScope.launch {
-            _composeLoginUIState.update { state ->
-                state.copy(loadingState = true)
-            }
+        viewModelScope.launch(Dispatchers.Main) {
             useCase.doLogin().collect {
-                Timber.d("@@@@@@@ ${it.toString()}")
                 when (it) {
                     is Result.Loading -> {
                         _composeLoginUIState.update { state ->
@@ -54,7 +49,7 @@ class ViewModelLogin @Inject constructor(
                     }
                     is Result.Success -> {
                         _composeLoginUIState.update { state ->
-                            state.copy(loadingState = false, isLogin = true)
+                            state.copy(loadingState = false)
                         }
                         _state.value = it.data
                         routeNavigator.navigateToRoute(SignRoute.route)
